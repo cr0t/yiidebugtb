@@ -9,18 +9,21 @@
 		<?php if ($alignLeft): ?>
 		float: left;
 		left: 0;
+		border-right: solid 1px #000;
+		border-bottom: solid 1px #000;
 		<?php else: ?>
 		float: right;
 		right: 0;
+		border-left: solid 1px #000;
+		border-bottom: solid 1px #000;
 		<?php endif ?>
 		
 		top: 0;
 		height: 16px;
 		background-color: #eef;
-		border: solid 1px #000;
 		padding: 1px;
 		z-index: 65536;
-		font: normal 10pt Arial, Helvetica,sans-serif;
+		font: normal 10pt Arial, Helvetica, sans-serif;
 	}
 	
 	.yiiWebDebugOpacity {
@@ -80,8 +83,9 @@
 		position: absolute;
 		width: 100%;
 		top: 0;
+		left: 0;
+		font: normal 10pt Arial, Helvetica, sans-serif;
 		z-index:65535;
-		border: solid 1px #888;
 	}
 	
 	#yiiWebDebugPanel .panelHeadInfo {}
