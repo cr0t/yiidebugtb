@@ -389,7 +389,7 @@ class yiiDebugConfig extends yiiDebugClass
 	{
 		$values = array();
 		if (isset($_GET)) $values['Get'] = $_GET;
-		if (isset($_POST)) $values['Get'] = $_POST;
+		if (isset($_POST)) $values['Post'] = $_POST;
 		$values['Yii'] = Yii::app()->request;
 		return $values;
 	}
