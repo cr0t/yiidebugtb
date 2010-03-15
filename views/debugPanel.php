@@ -21,9 +21,10 @@
 		top: 0;
 		height: 16px;
 		background-color: #eef;
+		color: #444;
 		padding: 1px;
-		z-index: 65536;
-		font: normal 10pt Arial, Helvetica, sans-serif;
+		z-index: 65535;
+		font: normal 10pxt Arial, Helvetica, sans-serif;
 	}
 	
 	.yiiWebDebugOpacity {
@@ -62,6 +63,7 @@
 	
 	#yiiWebDebugToolbar .yiiLinkItem:hover {
 		text-decoration: none;
+		background: none;
 	}
 	
 	ul#yiiWebDebugToolbarItems {
@@ -80,12 +82,13 @@
 	
 	#yiiWebDebugPanel {
 		background-color: #eee;
+		color: #000;
 		position: absolute;
 		width: 100%;
 		top: 0;
 		left: 0;
 		font: normal 10pt Arial, Helvetica, sans-serif;
-		z-index:65535;
+		z-index:65534;
 	}
 	
 	#yiiWebDebugPanel .panelHeadInfo {}
@@ -114,6 +117,7 @@
 	}
 	
 	#yiiWebDebugPanel .panelGrid table thead th {
+		text-align: left;
 		padding-right: 5px;
 		padding-left: 5px;
 		border: solid 1px #888;
@@ -125,6 +129,7 @@
 	}
 	
 	#yiiWebDebugPanel .panelGrid table tbody td {
+		text-align: left;
 		padding-right: 5px;
 		padding-left: 5px;
 		border: solid 1px #888;
@@ -151,9 +156,10 @@
 	.yiiDebugInfoList {}
 	
 	.yiiDebugInfoList h2 {
-		font-size: 16px;
+		font-size: 11pt;
 		margin: 0;
 		border-bottom: solid 1px #bbb;
+		color: #444;
 	}
 	
 	.yiiDebugInfoList h2 a {
@@ -166,6 +172,7 @@
 	}
 
 	.yiiDebugInfoList div pre {
+		font-size: 10pt;
 		margin: 0px;
 		padding: 0px;
 	}
