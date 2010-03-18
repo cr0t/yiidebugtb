@@ -194,14 +194,14 @@
 <div id="yiiWebDebugToolbar" onmouseover="yiiDebugMouse(true);" onmouseout="yiiDebugMouse(false);">
 	<?php if (!$alignLeft): ?>
 	<ul>
-		<li><a href="#" class="yiiLink" onClick="yiiWebDebugToggle('yiiWebDebugToolbarItems');">Yii</a></li>
+		<li><a href="#" class="yiiLink" onclick="return yiiWebDebugToggle('yiiWebDebugToolbarItems');">Yii</a></li>
 	</ul>
 	<?php endif ?>
 	
 	<ul id="yiiWebDebugToolbarItems">
 		<?php $index = 0; foreach ($items as $item): ?>
 		<li>[&nbsp;
-			<?php echo (isset($item['content']) && !is_null($item['content'])) ? '<a href="#" class="yiiLinkItem" onClick="yiiWebDebugToggle(\'__yiiWDP'.$index.'\');">'.$item['title'].'</a>' : $item['title'] ?>
+			<?php echo (isset($item['content']) && !is_null($item['content'])) ? '<a href="#" class="yiiLinkItem" onclick="return yiiWebDebugToggle(\'__yiiWDP'.$index.'\');">'.$item['title'].'</a>' : $item['title'] ?>
 			&nbsp;]
 		</li>
 		<?php if (isset($item['content']) && !is_null($item['content'])) $index++; endforeach ?>
@@ -209,7 +209,7 @@
 	
 	<?php if ($alignLeft): ?>
 	<ul>
-		<li><a href="#" class="yiiLink" onClick="yiiWebDebugToggle('yiiWebDebugToolbarItems');">Yii</a></li>
+		<li><a href="#" class="yiiLink" onclick="return yiiWebDebugToggle('yiiWebDebugToolbarItems');">Yii</a></li>
 	</ul>
 	<?php endif ?>
 </div>
@@ -240,8 +240,9 @@
 	</div>
 	
 	<?php
-	$index++;
-	endforeach; ?>
+		$index++;
+		endforeach;
+	?>
 </div>
 
 <script type="text/javascript">
