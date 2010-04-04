@@ -10,23 +10,23 @@
 	<style type="text/css">
 		body {
   		margin-top: 1.0em;
-  		background-color: #fe5706;
+  		background-color: #e6e6e6;
 		  font-family: "Helvetica,Arial,FreeSans"; 
-  		color: #ffffff;
+  		color: #333333;
     }
     #container {
       margin: 0 auto;
       width: 700px;
     }
-		h1 { font-size: 3.8em; color: #01a8f9; margin-bottom: 3px; }
+		h1 { font-size: 3.8em; color: #4d4d4d; margin-bottom: 3px; }
 		h1 .small { font-size: 0.4em; }
 		h1 a { text-decoration: none }
-		h2 { font-size: 1.5em; color: #01a8f9; }
-    h3 { text-align: center; color: #01a8f9; }
-    a { color: #01a8f9; }
+		h2 { font-size: 1.5em; color: #4d4d4d; }
+    h3 { text-align: center; color: #4d4d4d; }
+    a { color: #222222; }
     .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
     .download { float: right; }
-		pre { background: #000; color: #fff; padding: 15px;}
+		pre { background: #000; color: #333333; padding: 15px;}
     hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
     .footer { text-align:center; padding-top:30px; font-style: italic; }
 	</style>
@@ -52,17 +52,26 @@
       Yii Framework Debug Toolbar Extension
     </div>
 
-    <p>This extension is very useful in the development stage of project. It helps you to get info about PHP environment, application, queries logs, benchmarking with a simple little toolbar at the top of the page.
+    <p>
+	This extension is very useful in the development stage of project. It helps you to get info about PHP environment, application, queries logs, benchmarking with a simple little toolbar at the top of the page. It is a recreated Symfony's developer toolbar. First idea and very first implementation was my, but this version mostly implemented by Eduard Kuleshov.</p>
+	
+	<h2>Dependencies</h2>
 
-It is a recreated Symfony's developer toolbar. First idea and very first implementation was my, but this version mostly implemented by Eduard Kuleshov.</p><h2>Dependencies</h2>
-<p>Yii 1.0 or above</p>
+<p>Yii 1.0.x/1.1.0 or above</p>
+
 <h2>Install</h2>
-<p>Extract the release file under protected/extensions.
 
-Usage
+<p>
+	Extract the release file under protected/extensions.
+</p>
 
-main.php configuration file update:
+<h3>Usage</h3>
 
+<p>
+	main.php configuration file:
+</p>
+
+<pre>
     [...] 
     // autoloading model and component classes
     'import'=>array(
@@ -86,15 +95,19 @@ main.php configuration file update:
         ),
     ),
     [...]
+</pre>
 
-###Options reference
+<h3>Options reference</h3>
 
-* ‘alignLeft’ => Debug toolbar will be aligned to the top left corner of browser window
-* ‘opaque’ => Makes debug toolbar almost invisible when it’s minimized
-* ‘runInDebug’ => Show debug toolbar only if Yii application running in DEBUG MODE (see index.php for details)
-* ‘fixedPos’ => Makes debug toolbar sticky with browser window, not document!
-* ‘collapsed’ => Show debug toolbar minimized by default
-* ‘yamlStyle’ => Show configuration report in Yaml or PHP-array style.</p>
+<ul>
+	<li>'alignLeft' => Debug toolbar will be aligned to the top left corner of browser window</li>
+	<li>'opaque' => Makes debug toolbar almost invisible when it’s minimized</li>
+	<li>'runInDebug' => Show debug toolbar only if Yii application running in DEBUG MODE (see index.php for details)</li>
+	<li>'fixedPos' => Makes debug toolbar sticky with browser window, not document!</li>
+	<li>'collapsed' => Show debug toolbar minimized by default</li>
+	<li>'yamlStyle' => Show configuration report in Yaml or PHP-array style.</li>
+</ul>
+
 <h2>License</h2>
 <p>Copyright (c) 2009-2010 Sergey Kuznetsov, Eduard Kuleshov
 
@@ -104,9 +117,12 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
 <h2>Authors</h2>
-<p>Sergey Kuznetsov (kuznecov.sg@gmail.com)<br/>Eduard Kuleshov<br/>      </p>
+<p>Sergey Kuznetsov (kuznecov.sg@gmail.com)
+<br/>Eduard Kuleshov
+<br/>      </p>
 <h2>Contact</h2>
-<p>Sergey Kuznetsov (kuznecov.sg@gmail.com)<br/>      </p>
+<p>Sergey Kuznetsov (kuznecov.sg@gmail.com)
+<br/>      </p>
 
 
     <h2>Download</h2>
