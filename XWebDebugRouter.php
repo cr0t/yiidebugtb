@@ -438,6 +438,7 @@ class yiiDebugConfig extends yiiDebugClass
 class XWebDebugRouter extends CLogRoute
 {
 	public $config = '';
+	public $allowedIPs = array('127.0.0.1');
 
 	public function collectLogs($logger, $processLogs = false)
 	{
@@ -450,6 +451,9 @@ class XWebDebugRouter extends CLogRoute
 	{
 		$app=Yii::app();
 		$config = array();
+		
+		if( !in_array($app->request->getUserHostAddress(), $this->allowedIPs) ) return;
+			
 		foreach (explode(',', $this->config) as $value)
 		{
 			$value = trim($value);
