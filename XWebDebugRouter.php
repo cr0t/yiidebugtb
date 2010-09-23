@@ -208,6 +208,8 @@ class yiiDebugClass
 		{
 			list($message, $level, $category, $timestamp) = $item;
 			$message = CHtml::encode($message);
+			// put each source file on its own line
+			$message = implode("<br/>", explode("\n", $message));
 			$time=yiiDebugTrace::timestampToTime($timestamp);
 			$odd = !$odd;
 
