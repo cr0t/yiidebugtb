@@ -24,7 +24,7 @@
 		color: #444;
 		padding: 1px;
 		z-index: 65535;
-		font: normal 10pxt Arial, Helvetica, sans-serif;
+		font: normal 10px Arial, Helvetica, sans-serif;
 	}
 	
 	.yiiWebDebugOpacity {
