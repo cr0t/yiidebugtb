@@ -31,7 +31,7 @@
  * 			'class'=>'XWebDebugRouter',
  * 			'config'=>'alignLeft, opaque, runInDebug, fixedPos, collapsed',
  * 			'levels'=>'error, warning, trace, profile, info',
- *      'allowedIPs'=>array('127.0.0.1','192.168.1.54'),
+ *      'allowedIPs'=>array('127.0.0.1','192.168.1.54','192\.168\.1[0-5]\.[0-9]{3}'),
  * 		),
  * ),
  * [...]
@@ -49,8 +49,6 @@
  * the toolbar anyway.
  * AllowedIPs be defined as a preg regexps ie: '192\.168\.1[0-5]\.[0-9]{3}'
  */
-
- //TODO: Need more comments (rus: Нужно больше комментариев к коду)
 
 /**
  * Helper class for array dumping.
@@ -466,7 +464,7 @@ class XWebDebugRouter extends CLogRoute
 		foreach($this->allowedIPs as $pattern)
 		{
 			// if found any char other than [0-9] and dot, treat pattern as a regexp
-			if(preg_match('/[^0-9\.]/', $pattern))
+			if(preg_match('/[^0-9:\.]/', $pattern))
 			{
 				if(preg_match('/'.$pattern.'/', $ip))
 				{

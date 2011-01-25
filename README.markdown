@@ -40,7 +40,7 @@ main.php configuration file update:
             'class'=>'XWebDebugRouter',
             'config'=>'alignLeft, opaque, runInDebug, fixedPos, collapsed, yamlStyle',
             'levels'=>'error, warning, trace, profile, info',
-						'allowedIPs'=>array('127.0.0.1','192.168.1.54'),
+						'allowedIPs'=>array('127.0.0.1','::1','192.168.1.54','192\.168\.1[0-5]\.[0-9]{3}'),
           ),
         ),
     ),
