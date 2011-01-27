@@ -445,7 +445,7 @@ class yiiDebugConfig extends yiiDebugClass
 class XWebDebugRouter extends CLogRoute
 {
 	public $config = '';
-	public $allowedIPs = array('127.0.0.1');
+	public $allowedIPs = array('127.0.0.1', '::1'); // IPv4 and IPv6 localhost addresses
 
 	public function collectLogs($logger, $processLogs = false)
 	{
