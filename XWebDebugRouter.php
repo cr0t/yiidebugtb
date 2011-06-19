@@ -231,17 +231,26 @@ class yiiDebugClass {
 class yiiDebugDB extends yiiDebugClass {
 	public static function getInfo($data, $config = null) {
 		parent::getInfo($data);
+		
 		$result = array();
 		$result['panelTitle'] = 'Database Queries';
-		$count = 0;
-		$items = array();
+		
+		$count  = 0;
+		$cached = 0
+		$items  = array();
 		
 		foreach ($data as $row) {
 			if (substr($row[2], 0, 9) == 'system.db') {
 				$items[] = $row;
 				
 				if ($row[2] == 'system.db.CDbCommand') {
-					$count++;
+					if (strpos($row[0], 'Querying SQL') !== false) {
+						$count++;
+					}
+					
+					if (strpos($row[0], 'Query result found in cache') !== false) {
+						$cached++;
+					}
 				}
 			}
 		}
@@ -249,9 +258,13 @@ class yiiDebugDB extends yiiDebugClass {
 		if (count($items) > 0) {
 			$result['content'] = yiiDebugTrace::render($items);
 		}
-
+		
 		$result['title'] = 'DB Query: ' . $count;
-
+		
+		if ($cached > 0) {
+			$result['title'] .= " ($cached found in cache)";
+		}
+		
 		return $result;
 	}
 }
