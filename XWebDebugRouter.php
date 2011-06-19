@@ -236,7 +236,7 @@ class yiiDebugDB extends yiiDebugClass {
 		$result['panelTitle'] = 'Database Queries';
 		
 		$count  = 0;
-		$cached = 0
+		$cached = 0;
 		$items  = array();
 		
 		foreach ($data as $row) {
