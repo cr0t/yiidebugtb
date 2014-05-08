@@ -1,0 +1,13 @@
+{
+    "name": "cr0t/yiidebugtb",
+    "description": "",
+    "license": "proprietary",
+    "require": {
+        "yiisoft/yii": "*"
+    },
+    "autoload": {
+        "classmap": [
+            "XWebDebugRouter.php"
+        ]
+    }
+}
