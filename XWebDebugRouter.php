@@ -305,10 +305,15 @@ class yiiDebugTime extends yiiDebugClass {
 class yiiDebugMem extends yiiDebugClass {
 	public static function getInfo($data, $config = null) {
 		parent::getInfo($data);
-		
+
 		$result          = array();
-		//round it for two digits after point
-		$result['title'] = 'Memory: ' . (round(Yii::getLogger()->getMemoryUsage() / 1024, 2)) . 'Kb';
+		if ( Yii::app()->format && get_class(Yii::app()->format) == 'CFormatter' ) {
+			$size = Yii::app()->format->formatSize(Yii::getLogger()->getMemoryUsage());
+		} else {
+			//round it for two digits after point
+			$size = round(Yii::getLogger()->getMemoryUsage() / 1024, 2) . 'Kb';
+		}
+		$result['title'] = 'Memory: ' . $size;
 
 		return $result;
 	}
