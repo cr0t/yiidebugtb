@@ -29,7 +29,7 @@
  * 'routes'=>array(
  * 		array(
  * 			'class'=>'XWebDebugRouter',
- * 			'config'=>'alignLeft, opaque, runInDebug, fixedPos, collapsed',
+ * 			'config'=>'alignLeft, opaque, runInDebug, fixedPos, collapsed, dbProfiling',
  * 			'levels'=>'error, warning, trace, profile, info',
  *      'allowedIPs'=>array('127.0.0.1','192.168.1.54','192\.168\.1[0-5]\.[0-9]{3}'),
  * 		),
@@ -42,6 +42,7 @@
  * 'runInDebug'	=> Show debug toolbar only if Yii application running in DEBUG MODE (see index.php for details)
  * 'fixedPos'	=> Makes debug toolbar sticky with browser window, not document!
  * 'collapsed'	=> Show debug toolbar minimized by default.
+ * 'dbProfiling'	=> enable profiling of DB queries and param logging.
  *
  * Also there is an additional security feature you may need - 'allowedIPs' option. This option
  * holds the array of IP addresses of all machines you need to use in development cycle. So if you
@@ -473,7 +474,16 @@ class XWebDebugRouter extends CLogRoute {
 		'fixedPos'    => false, //makes debug toolbar sticky with browser window, not document!
 		'collapsed'   => false, //show debug toolbar minimized by default
 		'yamlStyle'   => false, //show configuration report in Yaml or PHP-array style.
+		'dbProfiling' => false, //enable profiling of DB queries and param logging
 	);
+
+	public function init() {
+		parent::init();
+		if ( !empty($this->_config['dbProfiling']) && $this->_isLoggerAllowed() ) {
+			Yii::app()->db->enableProfiling = true;
+			Yii::app()->db->enableParamLogging = true;
+		}
+	}
 
 	public function collectLogs($logger, $processLogs = false) {
 		$logs = $logger->getLogs($this->levels, $this->categories);
