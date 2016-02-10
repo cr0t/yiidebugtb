@@ -29,7 +29,7 @@
  * 'routes'=>array(
  * 		array(
  * 			'class'=>'XWebDebugRouter',
- * 			'config'=>'alignLeft, opaque, runInDebug, fixedPos, collapsed',
+ * 			'config'=>'alignLeft, opaque, runInDebug, fixedPos, collapsed, dbProfiling',
  * 			'levels'=>'error, warning, trace, profile, info',
  *      'allowedIPs'=>array('127.0.0.1','192.168.1.54','192\.168\.1[0-5]\.[0-9]{3}'),
  * 		),
@@ -42,6 +42,7 @@
  * 'runInDebug'	=> Show debug toolbar only if Yii application running in DEBUG MODE (see index.php for details)
  * 'fixedPos'	=> Makes debug toolbar sticky with browser window, not document!
  * 'collapsed'	=> Show debug toolbar minimized by default.
+ * 'dbProfiling'	=> enable profiling of DB queries and param logging.
  *
  * Also there is an additional security feature you may need - 'allowedIPs' option. This option
  * holds the array of IP addresses of all machines you need to use in development cycle. So if you
@@ -176,10 +177,10 @@ class arrayDumper {
 class yiiDebugPanel {
 	public function render($items = array(), $config = array()) {
 		$msg       = "Run rendering...\n";
-		$alignLeft = isset($config['alignLeft']) ? true : false;
-		$opaque    = isset($config['opaque']) ? true : false;;
-		$fixedPos  = isset($config['fixedPos']) ? true : false;
-		$collapsed = isset($config['collapsed']) ? true : false;;
+		$alignLeft = !empty($config['alignLeft']);
+		$opaque    = !empty($config['opaque']);
+		$fixedPos  = !empty($config['fixedPos']);
+		$collapsed = !empty($config['collapsed']);
 
 		$viewFile  = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'debugPanel.php';
 		include(Yii::app()->findLocalizedFile($viewFile, 'en'));
@@ -436,7 +437,7 @@ class yiiDebugConfig extends yiiDebugClass {
 		<div style="text-align: left" class="yiiDebugInfoList">
 		<h2> <a href="#" onclick="yiiWebDebugToggleVisible(\'yiiWDCFG' . $id . '\'); return false;">+</a>' . $id . '</h2>'.
 		//'<div id="yiiWDCFG'.$id.'" style="display: none;"><pre>' .($formatted ? $values : arrayDumper::dump(arrayDumper::removeObjects($values),$highlight)) . '</pre></div></div>';
-		'<div id="yiiWDCFG' . $id . '" style="display: none;"><pre>' . arrayDumper::dump($values, 10, $highlight, isset(self::$_config['yamlStyle'])) . '</pre></div></div>';
+		'<div id="yiiWDCFG' . $id . '" style="display: none;"><pre>' . arrayDumper::dump($values, 10, $highlight, !empty(self::$_config['yamlStyle'])) . '</pre></div></div>';
 	}
 
 	public static function getInfo($data, $config = null) {
@@ -464,68 +465,88 @@ class yiiDebugConfig extends yiiDebugClass {
  * and renders self output to the end of server output (after </html> tag of document).
  */
 class XWebDebugRouter extends CLogRoute {
-	public $config     = '';
 	public $allowedIPs = array('127.0.0.1', '::1'); // IPv4 and IPv6 localhost addresses
+
+	private $_config   = array(
+		'alignLeft'   => false, //debug toolbar will be aligned to the top left corner of browser window
+		'opaque'      => false, //makes debug toolbar almost invisible when it’s minimized
+		'runInDebug'  => false, //show debug toolbar only if Yii application running in DEBUG MODE (see index.php for details)
+		'fixedPos'    => false, //makes debug toolbar sticky with browser window, not document!
+		'collapsed'   => false, //show debug toolbar minimized by default
+		'yamlStyle'   => false, //show configuration report in Yaml or PHP-array style.
+		'dbProfiling' => false, //enable profiling of DB queries and param logging
+	);
+
+	public function init() {
+		parent::init();
+		if ( !empty($this->_config['dbProfiling']) && $this->_isLoggerAllowed() ) {
+			Yii::app()->db->enableProfiling = true;
+			Yii::app()->db->enableParamLogging = true;
+		}
+	}
 
 	public function collectLogs($logger, $processLogs = false) {
 		$logs = $logger->getLogs($this->levels, $this->categories);
-		
+
 		if (empty($logs)) {
 			$logs = array();
 		}
-		
+
 		$this->processLogs($logs);
 	}
 
 	public function processLogs($logs) {
-		$app    = Yii::app();
-		$config = array();
-
-		$ip      = $app->request->getUserHostAddress();
-		$allowed = false;
-		
-		foreach($this->allowedIPs as $pattern) {
-			// if found any char other than [0-9] and dot, treat pattern as a regexp
-			if (preg_match('/[^0-9:\.]/', $pattern)) {
-				if (preg_match('/' . $pattern . '/', $ip)) {
-					$allowed = true;
-					break;
-				}
-			}
-			else if ($pattern === $ip) {
-				$allowed = true;
-				break;
-			}
-		}
-
-		if (!$allowed) {
+		if (!$this->_isLoggerAllowed())
 			return;
-		}
-		
-		foreach (explode(',', $this->config) as $value) {
-			$value          = trim($value);
-			$config[$value] = true;
-		}
 
-		//Checking for an AJAX Requests
-		if (!($app instanceof CWebApplication) || $app->getRequest()->getIsAjaxRequest()) {
-			return;
-		}
-		
-		//Checking for an DEBUG mode of running app
-		if (isset($config['runInDebug']) && (!DEFINED('YII_DEBUG') || YII_DEBUG == false)) {
-			return;
-		}
-		
 		$items = array();
-		
-		$items[] = yiiDebugConfig::getInfo($logs, $config);
+
+		$items[] = yiiDebugConfig::getInfo($logs, $this->_config);
 		$items[] = yiiDebugMem::getInfo($logs);
 		$items[] = yiiDebugTime::getInfo($logs);
 		$items[] = yiiDebugDB::getInfo($logs);
 		$items[] = yiiDebugTrace::getInfo($logs);
 
 		$panel = new yiiDebugPanel();
-		$panel->render($items, $config);
+		$panel->render($items, $this->_config);
+	}
+
+	public function setConfig($config) {
+		if (is_array($config)) {
+			$this->_config = $config;
+		} else {
+			foreach (explode(',', $config) as $value) {
+				$value = trim($value);
+				$this->_config[$value] = true;
+			}
+		}
+	}
+
+	private function _isLoggerAllowed() {
+		$app = Yii::app();
+
+		//Checking for an DEBUG mode of running app
+		if (!empty($this->_config['runInDebug']) && (!DEFINED('YII_DEBUG') || YII_DEBUG == false))
+			return false;
+
+		//Checking for an AJAX Requests
+		if (!($app instanceof CWebApplication) || $app->getRequest()->getIsAjaxRequest())
+			return false;
+
+		//Checking IP
+		$ip = $app->request->getUserHostAddress();
+		foreach ($this->allowedIPs as $pattern) {
+			// if found any char other than [0-9] and dot, treat pattern as a regexp
+			if (preg_match('/[^0-9:\.]/', $pattern)) {
+				if (preg_match('/' . $pattern . '/', $ip)) {
+					return true;
+				}
+			}
+			else if ($pattern === $ip) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

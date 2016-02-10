@@ -40,7 +40,7 @@ main.php configuration file update:
       // toolbar configuration (see available options below)
       array(
         'class'=>'XWebDebugRouter',
-        'config'=>'alignLeft, opaque, runInDebug, fixedPos, collapsed, yamlStyle',
+        'config'=>'alignLeft, opaque, runInDebug, fixedPos, collapsed, yamlStyle, dbProfiling',
         'levels'=>'error, warning, trace, profile, info',
         'allowedIPs'=>array('127.0.0.1','::1','192.168.1.54','192\.168\.1[0-5]\.[0-9]{3}'),
       ),
@@ -57,6 +57,7 @@ main.php configuration file update:
 * `'fixedPos'` - makes the debug toolbar sticky with browser window, not document!;
 * `'collapsed'` - show the debug toolbar minimized by default;
 * `'yamlStyle'` - show configuration report in Yaml or PHP-array style.
+* `'dbProfiling'` - enable profiling of DB queries and param logging. (see `CDbConnection::$enableProfiling` and `CDbConnection::$enableParamLogging`)
 
 Also there is an additional security feature you may need - `'allowedIPs'` option.
 This option holds the array of IP addresses of all machines you need to use in
