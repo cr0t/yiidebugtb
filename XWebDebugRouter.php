@@ -243,9 +243,10 @@ class yiiDebugDB extends yiiDebugClass {
 		foreach ($data as $row) {
 			if (substr($row[2], 0, 9) == 'system.db') {
 				$items[] = $row;
-				
-				if ($row[2] == 'system.db.CDbCommand') {
-					if (strpos($row[0], 'Querying SQL') !== false) {
+
+				//if ($row[2] == 'system.db.CDbCommand')  - It works only if YII_DEBUG == true
+				if (substr($row[2], 0, 20) == 'system.db.CDbCommand') {
+					if (substr($row[0], 0, 6) == 'begin:') {
 						$count++;
 					}
 					
