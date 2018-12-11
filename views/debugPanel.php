@@ -10,21 +10,20 @@
 		float: left;
 		left: 0;
 		border-right: solid 1px #000;
-		border-bottom: solid 1px #000;
 		<?php else: ?>
 		float: right;
 		right: 0;
 		border-left: solid 1px #000;
-		border-bottom: solid 1px #000;
 		<?php endif ?>
+		border-bottom: solid 1px #000;
 		
 		top: 0;
-		height: 16px;
+		height: 26px;
 		background-color: #eef;
 		color: #444;
 		padding: 1px;
 		z-index: 65535;
-		font: normal 10px Arial, Helvetica, sans-serif;
+		font: normal 18px Arial, Helvetica, sans-serif;
 	}
 	
 	.yiiWebDebugOpacity {
@@ -72,11 +71,11 @@
 		<?php else: ?>
 		margin-left: 5px;
 		<?php endif ?>
+		display: none;
 	}
 	
 	ul#yiiWebDebugToolbarItems li {
 		margin-top: 1px;
-		font-size: 11px;
 		font-weight: bold;
 	}
 	
@@ -189,6 +188,10 @@
 	.yiiDebugInfoList div pre code span span {
 		font-size: 10pt;
 	}
+
+	div.yiiDebugInfoList>h2 {
+		background-color: #eee;
+	}
 </style>
 
 <div id="yiiWebDebugToolbar" onmouseover="yiiDebugMouse(true);" onmouseout="yiiDebugMouse(false);">
@@ -199,10 +202,10 @@
 	<?php endif ?>
 	
 	<ul id="yiiWebDebugToolbarItems">
-		<?php $index = 0; foreach ($items as $item): ?>
-		<li>[&nbsp;
+		<?php $index = 0; foreach (self::$items as $item): ?>
+		<li>|&nbsp;
 			<?php echo (isset($item['content']) && !is_null($item['content'])) ? '<a href="#" class="yiiLinkItem" onclick="return yiiWebDebugToggle(\'__yiiWDP'.$index.'\');">'.$item['title'].'</a>' : $item['title'] ?>
-			&nbsp;]
+			&nbsp;
 		</li>
 		<?php if (isset($item['content']) && !is_null($item['content'])) $index++; endforeach ?>
 	</ul>
@@ -249,6 +252,16 @@
 	var _curPanel = '';
 	var panelMaxHeight = 100;
 	
+	$('input:checkbox.debug_category_trigger').on('click', function() {
+		var category = $(this).prop('name');
+		var isChecked = $(this).prop('checked');
+
+		// now get table row and add toggle hidden class by checkbox
+		// table#debugInfo>tbody>tr 
+		var element = 'table#debugInfo>tbody>tr.'+category;
+		$(element).toggleClass('hidden');
+	});
+
 	//Selector function
 	function _$(element) { return document.getElementById(element); }
 	
