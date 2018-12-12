@@ -325,10 +325,8 @@ class yiiDebugDB extends yiiDebugClass {
 						self::$queryCount++;
 					}
 				}
-				//PC::debug($row);
 				$row = self::formatLogEntry($row);
 				self::$items[] = $row;
-				//debugging in PHP Console.... PC::debug($row,'DB');
 			}
 		}
 
@@ -397,11 +395,6 @@ class yiiDebugDB extends yiiDebugClass {
 		if($sqlStart === FALSE) return $entry;
 		$sqlStart += 14;
 		$sqlEnd = strpos($queryString , "\nin D:");
-		if(strstr($queryString, 'Bound')) {
-			PC::debug($sqlStart.' - '.$sqlEnd, 'queryposition');
-			PC::debug($queryString, 'considered query');
-			PC::debug($entry[0], 'Full Text');
-		}
 		//$sqlEnd = strlen($queryString);
         $sqlLength = $sqlEnd - $sqlStart;
 		
@@ -707,7 +700,6 @@ class XWebDebugRouter extends CLogRoute {
 
 		// if </html> do this
 		//$panel->render($items, $this->_config);
-		//PC::debug($this->levels); show loglevels
 	}
 
 	public function setConfig($config) {
