@@ -188,6 +188,7 @@ class yiiDebugPanel {
 	protected static $output = null;
 	protected static $config = null;
 	protected static $items;
+	public static $isRendered = false;
 
 	public function setConfig($config) {
 		self::$config['alignLeft'] = !empty($config['alignLeft']);
@@ -198,6 +199,10 @@ class yiiDebugPanel {
 
 	public function setItems($items) {
 		self::$items = $items;
+	}
+
+	public function getItems() {
+		return self::$items;
 	}
 
 	public static function getInstance() {
@@ -214,6 +219,7 @@ class yiiDebugPanel {
 	public static function render() {
 		$items = self::$items;
 		$config = self::$config;
+		
 		$msg       = "Run rendering...\n";
 		$alignLeft = !empty($config['alignLeft']);
 		$opaque    = !empty($config['opaque']);
@@ -221,8 +227,7 @@ class yiiDebugPanel {
 		$collapsed = !empty($config['collapsed']);
 
 		$viewFile  = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'debugPanel.php';
-
-		require(Yii::app()->findLocalizedFile($viewFile, 'en')); 
+		require(Yii::app()->findLocalizedFile($viewFile, 'en'));
 	}
 
 }
@@ -432,7 +437,6 @@ class yiiDebugDB extends yiiDebugClass {
         return $entry;
     }
 
-
     /**
      * @return CTextHighlighter the text highlighter
      */
@@ -473,7 +477,6 @@ class yiiDebugTrace extends yiiDebugClass {
 		return $result;
 	}
 }
-
 class yiiDebugTime extends yiiDebugClass {
 	public static function getInfo($data, $config = null) {
 		parent::getInfo($data);
@@ -501,7 +504,6 @@ class yiiDebugMem extends yiiDebugClass {
 		return $result;
 	}
 }
-
 class yiiDebugConfig extends yiiDebugClass {
 	public static $yamlStyle = false;
 
@@ -647,6 +649,7 @@ class yiiDebugConfig extends yiiDebugClass {
  * and renders self output to the end of server output (after </html> tag of document).
  */
 class XWebDebugRouter extends CLogRoute {
+	private $isRegistered = false;
 	public $allowedIPs = array('127.0.0.1', '::1'); // IPv4 and IPv6 localhost addresses
 
 	private $_config   = array(
@@ -661,12 +664,13 @@ class XWebDebugRouter extends CLogRoute {
 
 	public function init() {
 		parent::init();
-		if ( !empty($this->_config['dbProfiling']) && $this->_isLoggerAllowed() ) {
-			Yii::app()->db->enableProfiling = true;
-			Yii::app()->db->enableParamLogging = true;
-
-			// we only want to siplay once, so we call render onEndRequest
-			Yii::app()->onEndRequest = array('YiiDebugPanel', 'render');
+		if( $this->_isLoggerAllowed() ) {
+			if ( !empty($this->_config['dbProfiling']) )  {
+				Yii::app()->db->enableProfiling = true;
+				Yii::app()->db->enableParamLogging = true;
+			}
+			$panel = yiiDebugPanel::getInstance();
+			$panel->setConfig($this->_config);
 		}
 	}
 
@@ -695,11 +699,27 @@ class XWebDebugRouter extends CLogRoute {
 		// new code
 		$panel = yiiDebugPanel::getInstance();
 		$panel->setConfig($this->_config);
-		$panel->setItems($items);
-		// end new code
 
-		// if </html> do this
-		//$panel->render($items, $this->_config);
+		$panel->setItems($items);
+		
+		// If any Logger sets autoFlush to 1 (like PHPConsole) we don't want to render here, instead we wait for onEndRequest
+		// actually we need to find out if we render more than once - onEndRequest would be great actually
+		// probably another way would be to see if log count is same as autoflush
+		$autoFlush = Yii::getLogger()->autoFlush;
+		if( $autoFlush == 1 ) {
+			// we only want to register the event if it's not done already
+			if(!($this->isRegistered)) {
+				// this event is not raised, without phpconsole (or autoflush before end) - doesn't make any sense
+				// even registering it in init doesn't work
+				Yii::app()->onEndRequest = array('YiiDebugPanel', 'render');
+				$this->isRegistered = true;
+			}
+		} else {
+			// without php console we have to render here, as processlogs happens after onEndRequest
+			// problem - with php console it renders here twice (on first entry and later on endrequest event)
+			$panel->render($items, $this->_config);
+		}
+		// end new code
 	}
 
 	public function setConfig($config) {
