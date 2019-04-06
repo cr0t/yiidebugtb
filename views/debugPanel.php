@@ -1,3 +1,4 @@
+
 <style type="text/css">
 	#yiiWebDebugToolbar {
 		<?php if ($fixedPos): ?>
@@ -10,21 +11,20 @@
 		float: left;
 		left: 0;
 		border-right: solid 1px #000;
-		border-bottom: solid 1px #000;
 		<?php else: ?>
 		float: right;
 		right: 0;
 		border-left: solid 1px #000;
-		border-bottom: solid 1px #000;
 		<?php endif ?>
+		border-bottom: solid 1px #000;
 		
 		top: 0;
-		height: 16px;
+		height: 26px;
 		background-color: #eef;
 		color: #444;
 		padding: 1px;
 		z-index: 65535;
-		font: normal 10px Arial, Helvetica, sans-serif;
+		font: normal 18px Arial, Helvetica, sans-serif;
 	}
 	
 	.yiiWebDebugOpacity {
@@ -72,11 +72,11 @@
 		<?php else: ?>
 		margin-left: 5px;
 		<?php endif ?>
+		display: none;
 	}
 	
 	ul#yiiWebDebugToolbarItems li {
 		margin-top: 1px;
-		font-size: 11px;
 		font-weight: bold;
 	}
 	
@@ -189,6 +189,10 @@
 	.yiiDebugInfoList div pre code span span {
 		font-size: 10pt;
 	}
+
+	div.yiiDebugInfoList>h2 {
+		background-color: #eee;
+	}
 </style>
 
 <div id="yiiWebDebugToolbar" onmouseover="yiiDebugMouse(true);" onmouseout="yiiDebugMouse(false);">
@@ -199,12 +203,13 @@
 	<?php endif ?>
 	
 	<ul id="yiiWebDebugToolbarItems">
-		<?php $index = 0; foreach ($items as $item): ?>
-		<li>[&nbsp;
+		<?php for($index = 0; $index < count(self::$items); $index++): $item = self::$items[$index]; ?>
+		<li>|&nbsp;
 			<?php echo (isset($item['content']) && !is_null($item['content'])) ? '<a href="#" class="yiiLinkItem" onclick="return yiiWebDebugToggle(\'__yiiWDP'.$index.'\');">'.$item['title'].'</a>' : $item['title'] ?>
-			&nbsp;]
+			&nbsp;
 		</li>
-		<?php if (isset($item['content']) && !is_null($item['content'])) $index++; endforeach ?>
+		<?php if (isset($item['content']) && !is_null($item['content'])) ?>
+		<?php endfor; ?>
 	</ul>
 	
 	<?php if ($alignLeft): ?>
@@ -216,32 +221,33 @@
 
 <div id="yiiWebDebugPanel">
 	<?php
-	$index = 0;
-	foreach ($items as $item): if (!isset($item['content']) || is_null($item['content'])) continue; ?>
+	for($itemCount = 0; $itemCount < count(self::$items); $itemCount++): 
+		$item = self::$items[$itemCount];
 	
-	<div id="__yiiWDP<?php echo $index ?>" style="display: none">
-		<div class="panelHeadInfo">
-			<?php if ($alignLeft) echo "<br/>" ?> <?php echo (isset($item['headinfo']) && !is_null($item['headinfo'])) ? $item['headinfo'] : '<br/><br/>' ?>
-		</div>
-		
-		<center>
-			<div class="gridContainer">
-				<div class="panelTitle">
-					<?php if (isset($item['panelTitle']) && !is_null($item['panelTitle'])) echo $item['panelTitle'] ?>
-				</div>
-				
-				<div class="panelGrid" id="panelGridH__yiiWDP<?php echo $index ?>">
-					<div id="panelGH__yiiWDP<?php echo $index ?>">
-						<?php echo $item['content'] ?>
+		if (!isset($item['content']) || is_null($item['content'])) continue; ?>
+	
+		<div id="__yiiWDP<?php echo $itemCount ?>" style="display: none">
+			<div class="panelHeadInfo">
+				<?php if ($alignLeft) echo "<br/>" ?> <?php echo (isset($item['headinfo']) && !is_null($item['headinfo'])) ? $item['headinfo'] : '<br/><br/>' ?>
+			</div>
+			
+			<center>
+				<div class="gridContainer">
+					<div class="panelTitle">
+						<?php if (isset($item['panelTitle']) && !is_null($item['panelTitle'])) echo $item['panelTitle'] ?>
+					</div>
+					
+					<div class="panelGrid" id="panelGridH__yiiWDP<?php echo $itemCount ?>">
+						<div id="panelGH__yiiWDP<?php echo $itemCount ?>">
+							<?php echo $item['content'] ?>
+						</div>
 					</div>
 				</div>
-			</div>
-		</center>
-	</div>
+			</center>
+		</div>
 	
 	<?php
-		$index++;
-		endforeach;
+		endfor;
 	?>
 </div>
 
@@ -249,6 +255,16 @@
 	var _curPanel = '';
 	var panelMaxHeight = 100;
 	
+	$('input:checkbox.debug_category_trigger').on('click', function() {
+		var category = $(this).prop('name');
+		var isChecked = $(this).prop('checked');
+
+		// now get table row and add toggle hidden class by checkbox
+		// table#debugInfo>tbody>tr 
+		var element = 'table#debugInfo>tbody>tr.'+category;
+		$(element).toggleClass('hidden');
+	});
+
 	//Selector function
 	function _$(element) { return document.getElementById(element); }
 	
